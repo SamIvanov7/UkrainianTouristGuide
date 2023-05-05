@@ -129,7 +129,3 @@ class UkrainianTouristGuide:
             guide = UkrainianTouristGuide()
             file = guide.read_prompt_and_return_mp3(question, yandex_api_key)
             return send_file(file, as_attachment=True)
-
-
-
-
