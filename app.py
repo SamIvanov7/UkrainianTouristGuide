@@ -1,12 +1,5 @@
-from tourist_guide import register_blueprints
 from flask import Flask
-def create_app():
-    app = Flask(__name__)
-    
-    register_blueprints(app)
-    
-    return app
+from tourist_guide.routes import guide_bp
 
-if __name__ == "__main__":
-    app = create_app()
-    app.run()
+app = Flask(__name__)
+app.register_blueprint(guide_bp)

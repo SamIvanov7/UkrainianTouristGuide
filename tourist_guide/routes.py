@@ -1,13 +1,18 @@
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, render_template, request, send_file, jsonify, send_from_directory
 from dotenv import load_dotenv
 from .guide import UkrainianTouristGuide
+from flask import Flask
 from tourist_guide.yandex import yandex_translate, synthesize_speech
 import os
 from os import listdir
 import openai
 import re
-
+app = Flask(__name__)
 guide_bp = Blueprint("guide", __name__)
+
+@guide_bp.route('/audio/<filename>')
+def audio(filename):
+    return send_from_directory('tourist_guide/result', filename)
 
 @guide_bp.route("/")
 def index():
@@ -15,8 +20,6 @@ def index():
 
 @guide_bp.route("/submit", methods=["POST"])
 def submit():
-
-            
     if request.method == "POST":
         question = request.form["question"]
 
@@ -27,9 +30,7 @@ def submit():
         print(f"After calling read_prompt_and_return_mp3, output_file_path: {output_file_path}")
 
         try:
-            return send_file(guide.file_name, as_attachment=True, attachment_filename="answer", mimetype="audio/mpeg")
+            return jsonify({"filename": guide.file_name})
         except FileNotFoundError as e:
             print(f"FileNotFoundError: {e}")
-            print("Files in the /app/tourist_guide/result directory:")
-            print(listdir('/app/tourist_guide/result'))
             return str(e), 500
