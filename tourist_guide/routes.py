@@ -14,7 +14,9 @@ guide_bp = Blueprint("guide", __name__)
 @guide_bp.route('/audio/<filename>')
 def audio(filename):
     audio_file_path = os.path.join('tourist_guide', 'result', filename)
-    print(f"Audio file path: {audio_file_path}")  # Add this line to log the file path
+    print(f"Audio file path: {audio_file_path}")  
+    audio_directory = 'tourist_guide/result'
+    print(f"Files in {audio_directory}: {os.listdir(audio_directory)}")
     return send_from_directory('tourist_guide/result', filename)
 
 @guide_bp.route("/")
