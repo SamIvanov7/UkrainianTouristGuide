@@ -4,11 +4,15 @@ import logging
 import openai
 from .yandex import yandex_translate, synthesize_speech
 
+
+
 class UkrainianTouristGuide:
     timestamp = int(time.time())
     current_directory = os.path.dirname(os.path.abspath(__file__))
     result_directory = os.path.join(current_directory, "result")
     file_name = os.path.join(result_directory, f"answer_{timestamp}.mp3")
+    openai.api_key = os.getenv("OPENAI_API_KEY", default="key")
+    yandex_api_key = os.getenv("YANDEX_KEY", default="yakey")
 
 
     def __init__(self):
@@ -51,19 +55,20 @@ class UkrainianTouristGuide:
         except Exception as e:
             return f"Wait a minute please....{e}"
         
-    @staticmethod
-    def read_prompt_and_return_mp3(file_name, question, api_key):
+    
+    def read_prompt_and_return_mp3(self, question):
         source_language = "en"
         target_language = "ru"
 
-        guide = UkrainianTouristGuide()
-        answer = guide.handle_message(question)
-        translated_answer = yandex_translate(api_key, answer, source_language, target_language)
+
+        answer = self.handle_message(question)
+        translated_answer = yandex_translate(self.yandex_api_key, answer, source_language, target_language)
 
         print(f"Answer: {answer}")
         print(f"Translated answer: {translated_answer}")
 
-        file = synthesize_speech(api_key, translated_answer, file_name)
+        file = synthesize_speech(self.yandex_api_key, translated_answer, self.file_name)
+        print(f"File path returned by synthesize_speech: {file}")
 
         print(f"File: {file}")
 

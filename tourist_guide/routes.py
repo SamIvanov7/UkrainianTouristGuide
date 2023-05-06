@@ -3,16 +3,9 @@ from dotenv import load_dotenv
 from .guide import UkrainianTouristGuide
 from tourist_guide.yandex import yandex_translate, synthesize_speech
 import os
+from os import listdir
 import openai
 import re
-main = Blueprint("main", __name__)
-
-load_dotenv()
-yandex_api_key = os.getenv("YANDEX_KEY", default="yakey")
-
-
-from flask import Blueprint, render_template, request, send_file
-from .guide import UkrainianTouristGuide
 
 guide_bp = Blueprint("guide", __name__)
 
@@ -22,18 +15,21 @@ def index():
 
 @guide_bp.route("/submit", methods=["POST"])
 def submit():
+
+            
     if request.method == "POST":
         question = request.form["question"]
 
         guide = UkrainianTouristGuide()
-        file = guide.read_prompt_and_return_mp3(guide.file_name, question, yandex_api_key)
-        
-        def transform_filename(file_name):
-            match = re.search(r'_result_(\d+)\.mp3', file_name)
-            if match:
-                return f'answer_{match.group(1)}'
-            else:
-                return None
 
+        print("Before calling read_prompt_and_return_mp3")
+        output_file_path = guide.read_prompt_and_return_mp3(question)
+        print(f"After calling read_prompt_and_return_mp3, output_file_path: {output_file_path}")
 
-        return send_file(file, as_attachment=True, attachment_filename=transform_filename(guide.file_name), mimetype="audio/mpeg")
+        try:
+            return send_file(guide.file_name, as_attachment=True, attachment_filename="answer", mimetype="audio/mpeg")
+        except FileNotFoundError as e:
+            print(f"FileNotFoundError: {e}")
+            print("Files in the /app/tourist_guide/result directory:")
+            print(listdir('/app/tourist_guide/result'))
+            return str(e), 500
