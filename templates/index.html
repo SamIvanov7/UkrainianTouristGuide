@@ -77,12 +77,18 @@
             }).then((data) => {
                 const filename = data.filename;
                 const audioFileName = filename.split('/').pop(); // Extract the filename from the full path
-                const audio = new Audio(`/audio/${audioFileName}`);
-                audio.play();
+        
+                // Update the source of the audio element and then play it
+                const audioPlayer = document.getElementById("audio-player");
+                const audioSource = document.getElementById("audio-source");
+                audioSource.src = `/audio/${audioFileName}`;
+                audioPlayer.load();
+                audioPlayer.play();
             }).catch((error) => {
                 console.error("Error:", error);
             });
-        }); 
+        });
+        
     </script>
 </body>
 </html>

@@ -7,9 +7,7 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
+      - ./tourist_guide/result:/app/tourist_guide/result
     environment:
-      - OPENAI_API_KEY=key
-      - YANDEX_KEY=yakey
       - FLASK_APP=app.py
       - FLASK_RUN_HOST=0.0.0.0
-
