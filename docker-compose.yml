@@ -10,3 +10,6 @@ services:
     environment:
       - OPENAI_API_KEY=key
       - YANDEX_KEY=yakey
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+
